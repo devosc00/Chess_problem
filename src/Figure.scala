@@ -1,41 +1,55 @@
 /**
  * Created by rafa on 02.12.14.
  */
-trait Figure {
+object Figure {
 
-  case class Queen(pos: Pos) extends Figure
-  case class King(pos: Pos) extends Figure
-  case class Bishop(pos: Pos) extends Figure
-  case class Knight(pos: Pos) extends Figure
+/*  case class Queen(pos: (Int, Int)) extends Figure
+
+  case class King(pos: (Int, Int)) extends Figure
+
+  case class Bishop(pos: (Int, Int)) extends Figure
+
+  case class Knight(pos: (Int, Int)) extends Figure*/
 
 
-}
+  def sameRow(p1: (Int, Int), p2: (Int, Int)) = p1._1 == p2._1
 
-case class Pos(row: Int, column: Int) {
-  def sameRow(p: Pos) = row == p.row
-  def sameColumn(p: Pos) = column == p.column
-  def sameDiag(p: Pos) = (p.column - column).abs == (p.row - row).abs
-  def sameL(p: Pos) = (
-    ((p.column + 2, p.row +1) == (column + 2, row + 1))
-    || ((p.column - 2, p.row - 1) == (column - 2, row -1))
-    || ((p.column -2, p.row + 1) == (column - 2, row + 1))
-    || ((p.column + 2, p.row -1) == (column + 2, row - 1))
-    || ((p.column +1, p.row +2) == (column + 1, row +2))
-    || ((p.column + 1, p.row -2) == (column + 1, row -2))
-    || ((p.column -1, p.row + 2) == (column -1, row +2))
-    || ((p.column -1, p.row -2) == (column -1, row -2))
-    )
-  def kingMoves(p: Pos) = (
-    ((p.column + 1, p.row +1) == (column + 1, row + 1))
-      || ((p.column - 1, p.row - 1) == (column - 1, row -1))
-      || ((p.column -1, p.row + 1) == (column - 1, row + 1))
-      || ((p.column + 1, p.row -1) == (column + 1, row - 1))
-      || ((p.column +1) == (column + 1))
-      || ((p.row -1) == (row -1))
-      || ((p.column -1) == (column -1))
-      || ((p.row +1) == (row + 1))
+  def sameColumn(p1: (Int, Int), p2: (Int, Int)) = p1._2 == p2._2
+
+  def sameDiag(p1: (Int, Int), p2: (Int, Int)) = (p1._1 - p2._1).abs == (p1._2 - p2._2).abs
+
+  def sameL(p1: (Int, Int), p2: (Int, Int)) = (
+    ((p1._1 + 2, p1._2 + 1) ==(p2._1 + 2, p2._2 + 1))
+      || ((p1._1 - 2, p1._2 - 1) ==(p2._1 - 2, p2._2 - 1))
+      || ((p1._1 - 2, p1._2 + 1) ==(p2._1 - 2, p2._2 + 1))
+      || ((p1._1 + 2, p1._2 - 1) ==(p2._1 + 2, p2._2 - 1))
+      || ((p1._1 - 1, p1._2 - 2) ==(p2._1 - 1, p2._2 - 2))
+      || ((p1._1 - 1, p1._2 + 2) ==(p2._1 - 1, p2._2 + 2))
+      || ((p1._1 + 1, p1._2 - 2) ==(p2._1 + 1, p2._2 - 2))
+      || ((p1._1 + 1, p1._2 + 2) ==(p2._1 + 1, p2._2 + 2))
     )
 
-  def illegal(p: Pos) = sameRow(p) || sameColumn(p) || sameDiag(p)
-  def legal(p: Pos) = !illegal(p)
+  def kingMoves(p1: (Int, Int), p2: (Int, Int)) = (
+    ((p1._1 - 1, p1._2 - 1) ==(p2._1 - 1, p2._2 - 1))
+      || ((p1._1 - 1, p1._2 + 1) ==(p2._1 - 1, p2._2 + 1))
+      || ((p1._1 + 1, p1._2 - 1) ==(p2._1 + 1, p2._2 - 1))
+      || ((p1._1 + 1, p1._2 + 1) ==(p2._1 + 1, p2._2 + 1))
+      || ((p1._1 + 1) == (p2._1 + 1))
+      || ((p1._1 - 1) == (p2._1 - 1))
+      || ((p1._2 - 1) == (p2._2 - 1))
+      || ((p1._2 + 1) == (p2._2 + 1))
+    )
+
+  def isQueenAttack(p1: (Int, Int), p2: (Int, Int)) = (
+    sameRow(p1: (Int, Int), p2: (Int, Int))
+      || sameColumn(p1: (Int, Int), p2: (Int, Int))
+      || sameDiag(p1: (Int, Int), p2: (Int, Int))
+    )
+
+  def isBishopAttack(p1: (Int, Int), p2: (Int, Int)) = sameDiag(p1: (Int, Int), p2: (Int, Int))
+
+  def isKingAttack(p1: (Int, Int), p2: (Int, Int)) = kingMoves(p1: (Int, Int), p2: (Int, Int))
+
+  def isKnightAttack(p1: (Int, Int), p2: (Int, Int)) = sameL(p1: (Int, Int), p2: (Int, Int))
+
 }

@@ -26,13 +26,11 @@ object Nqueen {
   def placeQueens(n: Int): Solutions = n match {
     case 0 => List(Nil)
     case _ => for {
+      queens <- placeQueens(n - 1)
       y <- 1 to row
-      x <- 1 to column
-      queen = (x, y)
-      if (isSafeQueen(queen, ))
-
-      } yield queen :: queens
-
+      queen = (n, y)
+      if (isSafeQueen(queen, queens))
+    } yield queen :: queens
   }
 
 
