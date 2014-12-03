@@ -3,47 +3,51 @@
  */
 class ChessSolution {
 
-  val positionList: List[(String, Int, Int)]
-  val solusionList: List[List[(String, Int, Int)]]
+ // var positionList: List[(String, Int, Int)]
+//  val solutionList: List[List[(String, Int, Int)]]
 
 
-  def findSolution (figureList: List[String]) =
-    figureList.head match {
-      case "" => false
-      case "Queen" => for {
-        row <- 1 to figureList.size
-        column <- 1 to 7
-        pos = ("Q", row, column)
-        if isEmptyPosition(pos, positionList) && isNotAttackted(pos, positionList)
-        placeFigure(pos, positionList)
-          if (figureList.isEmpty)
-            addSolution(positionList)
-         // else findSolution(figureList.tail)
-      } false
+  def findSolution (figureList: List[String], positionList: List[(String, Int, Int)]): Boolean =
 
-      case "King" => for {
-        position <- positionList
-        if (isEmpty(position, positionList) && (isNotAttackted(position, positionList))) {
-          placeKing(position, positionList)
-          if (findSolution(figureList.tail)) true else addSolution(positionList)
-        }
-      } false
+    figureList match {
+      case List() => Nil false
+      case x :: xs => x match {
+        case "Queen" => for {
+          row <- 1 to figureList.size
+          column <- 1 to 7
+          pos = ("Q", row, column)
+          if isEmptyPosition(pos, positionList) && isNotAttackted(pos, positionList)
+          placeFigure(pos, positionList)
+/*          if (figureList.isEmpty)
+          addSolution(positionList)
+          else findSolution(figureList.tail)*/
+        } false
 
-      case "Bishop" => for {
-        position <- positionList
-        if (isEmpty(position, positionList) && (isNotAttackted(position, positionList))) {
-          placeBishop(position, positionList)
-          if (findSolution(figureList.tail)) true else addSolution(positionList)
-        }
-      } false
+        case "King" => for {
+          row <- 1 to figureList.size
+          column <- 1 to 7
+          pos = ("K", row, column)
+          if isEmptyPosition(pos, positionList) && isNotAttackted(pos, positionList)
+          placeFigure(pos, positionList)
+        } false
 
-      case "Knight" => for {
-        position <- positionList
-        if (isEmpty(position, positionList) && (isNotAttackted(position, positionList))) {
-          placeKnight(position, positionList)
-          if (findSolution(figureList.tail)) true else addSolution(positionList)
-        }
-      } false
+        case "Bishop" => for {
+          row <- 1 to figureList.size
+          column <- 1 to 7
+          pos = ("B", row, column)
+          if isEmptyPosition(pos, positionList) && isNotAttackted(pos, positionList)
+          placeFigure(pos, positionList)
+        } false
+
+        case "Knight" => for {
+          row <- 1 to figureList.size
+          column <- 1 to 7
+          pos = ("Kn", row, column)
+          if isEmptyPosition(pos, positionList) && isNotAttackted(pos, positionList)
+          placeFigure(pos, positionList)
+        } false
+      }
+        findSolution(xs, positionList)
     }
 
 
@@ -71,8 +75,8 @@ class ChessSolution {
     true
   }
 
-  def addSolution(positionList: List[(String, Int, Int)]): Unit = {
-    positionList :: solusionList
+  def addSolution(positionList: List[(String, Int, Int)], solutionList: List[List[(String, Int, Int)]]): Unit = {
+    positionList :: solutionList
   }
 
 }
