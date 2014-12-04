@@ -1,1 +1,1 @@
-Scala Puzzle for chess problem
+Chess problem puzzle
