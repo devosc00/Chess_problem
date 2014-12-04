@@ -1,22 +1,24 @@
-case class Pos(row: Int, column: Int) {
-  def sameRow(p: Pos) = row == p.row
-  def sameColumn(p: Pos) = column == p.column
-  def sameDiag(p: Pos) = (p.column - column).abs == (p.row - row).abs
-  def illegal(p: Pos) = sameRow(p) || sameColumn(p) || sameDiag(p)
-  def legal(p: Pos) = !illegal(p)
+val positionsList: List[(String, Int, Int)] = List(
+  ("Q", 0,0), ("K", 3, 4))
+
+val posList: List[(String, Int, Int)] = List()
+
+val figureList: List[String] = List ("Queen", "Queen", "King", "King",
+  "Bishop", "Bishop", "Knight")
+
+
+def placeFigure (pos: (String, Int, Int), positions: List[(String, Int, Int)]):List[(String, Int, Int)]  = {
+  pos :: positions
 }
 
-def rowSet(size: Int, row: Int) = Iterator.tabulate(size)(column => Pos(row, column))
 
-def expand(solutions: Iterator[List[Pos]], size: Int, row: Int) =
-  for {
-    solution <- solutions
-    pos <- rowSet(size, row)
-    if solution forall (_ legal pos)
-  } yield pos :: solution
+def isOccupyPosition (pos : (String, Int, Int), positions: List[(String, Int, Int)]): Boolean = {
+  if (positions.isEmpty) false
+  else positions exists (p => p._2 == pos._2 && p._3 == pos._3 )
+}
+placeFigure(("Kn", 5, 6), positionsList)
 
-def seed(size: Int) = rowSet(size, 0) map (sol => List(sol))
 
-def solve(size: Int) = (1 until size).foldLeft(seed(size)) (expand(_, size, _))
+isOccupyPosition(("K", 2, 4), positionsList)
 
-solve(4).size
+

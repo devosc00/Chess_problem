@@ -1,3 +1,5 @@
+package chess_problem
+
 /**
  * Created by rafa on 02.12.14.
  */
