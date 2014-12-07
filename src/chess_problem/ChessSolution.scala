@@ -1,6 +1,7 @@
 package chess_problem
 
 import scala.annotation.tailrec
+import scala.collection.immutable
 import scala.collection.mutable.ListBuffer
 
 /**
@@ -11,7 +12,9 @@ class ChessSolution {
 
   def run(figures: List[String]): List[List[(String, Int, Int)]] = {
 
-    // @tailrec
+    var acc = List[List[(String, Int, Int)]]()
+
+     @tailrec
     def findSolution(figureList: List[String], size: Int): List[List[(String, Int, Int)]] =
 
       figureList match {
@@ -19,7 +22,7 @@ class ChessSolution {
 
         case head :: tail => head match {
 
-/*
+          /*
 
           case "Queen" => x //return List[IndexedSeq[List[(...)]]]
           lazy val x = findSolution(figureList, size - 1) map (x => for {col <- 1 to size
@@ -51,46 +54,62 @@ class ChessSolution {
 
 */
 
+          //return List[List(Strint, Int, Int)]]
+          case "Queen" => acc match {
 
-          case "Queen" => x  //return List[List(Strint, Int, Int)]]
+            case Nil => acc ::= List(("Q", size - 1, 0))
 
-            lazy val x = for {
-                              figures <- findSolution(figureList, size -1)
-                               col <- 1 to size
-                               pos = ("Q", size, col)
-                               if !isOccupyPosition(pos, figures) && !isAttackted(pos, figures)
-                            } yield pos :: figures
+            case head :: tail => for {
+              figure <- acc
+              col <- 1 to size
+              pos = ("Q", size - 1, col)
+              if !isOccupyPosition(pos, figure) && !isAttackted(pos, figure)
+            } yield acc ::= List(pos)
 
-          case "King" => x
+          }
 
-            lazy val x = for {
-                              figures <- findSolution(figureList, size - 1 )
-                              column <- 1 to size
-                              pos = ("K", size, column)
-                               if !isOccupyPosition(pos, figures) && !isAttackted(pos, figures)
-                            } yield pos :: figures
 
-          case "Bishop" => x
+          case "King" => acc match {
 
-            lazy val x = for {
-                              figures <- findSolution(figureList, size - 1)
-                              column <- 1 to size
-                              pos = ("B", size, column)
-                                if !isOccupyPosition(pos, figures) && !isAttackted(pos, figures)
-                            } yield pos :: figures
+            case Nil => acc ::= List(("K", size, 0))
 
-          case "Knight" => x
 
-            lazy val x = for {
-                              figures <- findSolution(figureList, size - 1)
-                              column <- 1 to size
-                              pos = ("Kn", size, column)
-                                if !isOccupyPosition(pos, figures) && !isAttackted(pos, figures)
-                            } yield pos :: figures
+            case head :: tail => for {
+              figure <- acc
+              column <- 1 to size
+              pos = ("K", size, column)
+              if !isOccupyPosition(pos, figure) && !isAttackted(pos, figure)
+            } yield acc ::= List(pos)
+          }
+
+
+          case "Bishop" => acc match {
+
+            case Nil => acc ::= List(("Q", size, 0))
+
+            case head :: tail => for {
+              figure <- acc
+              column <- 1 to size
+              pos = ("B", size, column)
+              if !isOccupyPosition(pos, figure) && !isAttackted(pos, figure)
+            } yield acc ::= List(pos)
+          }
+
+
+          case "Knight" => acc match {
+
+            case Nil => acc ::= List(("Q", size, 0))
+
+            case head :: tail => for {
+              figure <- acc
+              column <- 1 to size
+              pos = ("Kn", size, column)
+              if !isOccupyPosition(pos, figure) && !isAttackted(pos, figure)
+            } yield acc ::= List(pos)
+          }
 
         }
-
-            findSolution(figureList.tail, figureList.tail.size)
+            findSolution(figureList.tail, figureList.size)
         }
 
           findSolution(figures, figures.size)
@@ -101,25 +120,23 @@ class ChessSolution {
 
     def isOccupyPosition(pos: (String, Int, Int), positions: List[(String, Int, Int)]): Boolean = {
       if (positions.isEmpty) {
-        println("is occupy pos")
         false
       }
       else positions exists (p => p._2 == pos._2 && p._3 == pos._3)
     }
 
 
-    def isAttackted(pos: (String, Int, Int), positions: List[(String, Int, Int)]) = {
-      if (positions.isEmpty) false
-      else positions forall (p => p._1 match {
-        case "Q" => Figure.isQueenAttack((p._2, p._3), (pos._2, pos._3))
-        case "K" => Figure.isKingAttack((p._2, p._3), (pos._2, pos._3))
-        case "B" => Figure.isBishopAttack((p._2, p._3), (pos._2, pos._3))
-        case "Kn" => Figure.isKnightAttack((p._2, p._3), (pos._2, pos._3))
+    def isAttackted(pos: (String, Int, Int), positions: List[(String, Int, Int)]): Boolean =
+                  pos._1 match {
+        case "Q" => positions forall (p => Figure.isQueenAttack((p._2, p._3), (pos._2, pos._3)))
+        case "K" => positions forall (p => Figure.isKingAttack((p._2, p._3), (pos._2, pos._3)))
+        case "B" => positions forall  (p => Figure.isBishopAttack((p._2, p._3), (pos._2, pos._3)))
+        case "Kn" => positions forall  (p => Figure.isKnightAttack((p._2, p._3), (pos._2, pos._3)))
         case _ => print("Bad figure name")
           true
       }
-        )
-    }
+
+
 
 /*
     def placeFigure(pos: (String, Int, Int), positions: List[(String, Int, Int)]): List[(String, Int, Int)] = {
