@@ -9,15 +9,15 @@ object Main {
 
   def main(args: Array[String]): Unit = {
 
-    val fullList = List("Queen", "Queen", "King", "King", "Bishop", "Bishop", "Knight")
 
     val partList = List("Queen", "King", "Bishop", "Knight")
 
+
     val chess = new ChessSolution
 
-    val solution = chess.run(fullList)
+    val solution = chess.buildUniqueLists(chess.findSolution(partList, 7))
 
-    println(solution.size)
+    println(solution)
   }
 
 }

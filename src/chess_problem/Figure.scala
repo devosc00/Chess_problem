@@ -5,14 +5,6 @@ package chess_problem
  */
 object Figure {
 
-/*  case class Queen(pos: (Int, Int)) extends Figure
-
-  case class King(pos: (Int, Int)) extends Figure
-
-  case class Bishop(pos: (Int, Int)) extends Figure
-
-  case class Knight(pos: (Int, Int)) extends Figure*/
-
 
   def sameRow(p1: (Int, Int), p2: (Int, Int)) = p1._1 == p2._1
 
@@ -53,5 +45,10 @@ object Figure {
   def isKingAttack(p1: (Int, Int), p2: (Int, Int)) = kingMoves(p1: (Int, Int), p2: (Int, Int))
 
   def isKnightAttack(p1: (Int, Int), p2: (Int, Int)) = sameL(p1: (Int, Int), p2: (Int, Int))
+
+  def isOnList (figure: (String, Int, Int), figures: List[(String, Int, Int)], counter: Int): Boolean = {
+    val count = figures count (f => (f._1 == figure._1 ))
+    count <=(counter)
+  }
 
 }
