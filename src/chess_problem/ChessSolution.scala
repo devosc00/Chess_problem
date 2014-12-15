@@ -1,8 +1,6 @@
 package chess_problem
 
-import scala.annotation.tailrec
-import scala.collection.immutable
-import scala.collection.mutable.ListBuffer
+
 
 /**
  * Created by rafa on 03.12.14.
@@ -21,17 +19,19 @@ class ChessSolution {
   var knights = List[(String, Int, Int)]()
 
 
-  def findSolution(figures: List[String], size: Int) = {
 
-    @tailrec
-    def accFunction (figures: List[String], acc: List[(String, Int, Int)]): List[(String, Int, Int)] = figures match {
+  def findSolution(figures: List[String], size: Int): List[(String, Int, Int)] = figures match {
 
       case Nil => acc
-      case head :: tail => (1 to size).flatMap(x => (1 to size).map(y => accFunction(figures.tail,(head, x, y)).map(_ :: acc)))
-      // acc foreach (x => println(x._1 + " " + x._2 + " " + x._3))
-    }
-    accFunction(figures, Nil)
+      case head :: tail => for {
+        x <- 1 to size
+        y <- 1 to size
+        pos = (head, x, y)
+      } acc ::= pos
+
+    findSolution(figures.tail, size)
   }
+
 
 
   def buildUniqueLists(figuresPos: List[(String, Int, Int)]) = {
@@ -48,11 +48,30 @@ class ChessSolution {
   }
 
 
-  val queensComb = queens.combinations(2).toList
-  val kingsComb = kings.combinations(2).toList
-  val bishopsComb = bishops.combinations(2).toList
+def twoSameFiguresComb: List[List[(String, Int, Int)]] =  {
+  val queensComb = queens.combinations(2).map(fig => fig.dropWhile(f => generalFilter(f, fig))).toList.filterNot(x => x.isEmpty)
+  val kingsComb = kings.combinations(2).map(fig => fig.dropWhile(f => generalFilter(f, fig))).toList.filterNot(x => x.isEmpty || x.size == 1)
+  val bishopsComb = bishops.combinations(2).map(fig => fig.dropWhile(f => generalFilter(f, fig))).toList.filterNot(x => x.isEmpty)
 
-  println(queensComb, kingsComb, bishopsComb)
+
+ val treeFiguresList = queensComb ::: kingsComb ::: bishopsComb
+
+  treeFiguresList
+}
+
+
+  def withStream(figures: List[(String, Int, Int)]): List[List[(String, Int, Int)]]  = {
+
+    lazy val countAll = { acc.reverse.combinations(7).toStream.map (x => x.dropWhile(x => generalFilter(x, acc))) }
+    val tr = countAll.toList
+    for (t <- tr) println(t)
+    tr
+  }
+
+
+  def generalFilter (figure: (String, Int, Int), positions: List[(String, Int, Int)]): Boolean = {
+    isOccupyPosition(figure, positions) && isAttackted(figure, positions) && isProperTimesOnList(figure, positions)
+  }
 
 
   def isProperTimesOnList (figure: (String, Int, Int), figures: List[(String, Int, Int)]): Boolean = { figure._1 match {
@@ -60,11 +79,6 @@ class ChessSolution {
     case _ => Figure.isOnList(figure, figures, 1)
   }
 
-  }
-
-
-  def generalFilter (figure: (String, Int, Int), positions: List[(String, Int, Int)]): Boolean = {
-    !isOccupyPosition(figure, positions) && isProperTimesOnList(figure, positions) && !isAttackted(figure, positions)
   }
 
 

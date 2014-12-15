@@ -15,9 +15,18 @@ object Main {
 
     val chess = new ChessSolution
 
+    println(chess.findSolution(partList, 7).size)
+
     val solution = chess.buildUniqueLists(chess.findSolution(partList, 7))
 
-    println(solution)
+    val semilist = chess.twoSameFiguresComb
+
+//    val stream = chess.withStream(chess.findSolution(partList, 7))
+
+//    val print = for (sem <- semilist) println(sem)
+//    print
+//    println(semilist.size)
+
   }
 
 }
