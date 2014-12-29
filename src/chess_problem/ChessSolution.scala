@@ -5,7 +5,6 @@ package chess_problem
 /**
  * Created by rafa on 03.12.14.
  */
-
 class ChessSolution {
 
   var acc = List[(String, Int, Int)]()
@@ -49,28 +48,42 @@ class ChessSolution {
 
 
 def twoSameFiguresComb: List[List[(String, Int, Int)]] =  {
-  val queensComb = queens.combinations(2).map(fig => fig.dropWhile(f => generalFilter(f, fig))).toList.filterNot(x => x.isEmpty)
-  val kingsComb = kings.combinations(2).map(fig => fig.dropWhile(f => generalFilter(f, fig))).toList.filterNot(x => x.isEmpty || x.size == 1)
-  val bishopsComb = bishops.combinations(2).map(fig => fig.dropWhile(f => generalFilter(f, fig))).toList.filterNot(x => x.isEmpty)
+  val queensComb = queens.combinations(2).map(fig => fig.dropWhile(f => twoFiguresFilter(f, fig))).toList.filterNot(x => x.isEmpty)
+  val kingsComb = kings.combinations(2).map(fig => fig.dropWhile(f => twoFiguresFilter(f, fig))).toList.filterNot(x => x.isEmpty || x.size == 1)
 
+  //val knightsComb: List[(String, Int, Int)] = knights
 
- val treeFiguresList = queensComb ::: kingsComb ::: bishopsComb
+ val twoFiguresList = queensComb ::: kingsComb //::: bishopsComb// ::: knightsComb
 
-  treeFiguresList
+  twoFiguresList
+
 }
 
 
-  def withStream(figures: List[(String, Int, Int)]): List[List[(String, Int, Int)]]  = {
+  def twoDifferentFiguresComb (figures: List[List[(String, Int, Int)]]): List[List[(String, Int, Int)]]  = {
 
-    lazy val countAll = { acc.reverse.combinations(7).toStream.map (x => x.dropWhile(x => generalFilter(x, acc))) }
+    lazy val countAll = { figures.combinations(2).map(fig => fig.dropWhile(f => filterFiguresList(f, fig.tail.head))).filterNot(x => x.isEmpty) }
     val tr = countAll.toList
-    for (t <- tr) println(t)
-    tr
+    tr map (x => x.flatten)
   }
 
 
-  def generalFilter (figure: (String, Int, Int), positions: List[(String, Int, Int)]): Boolean = {
-    isOccupyPosition(figure, positions) && isAttackted(figure, positions) && isProperTimesOnList(figure, positions)
+  def threeDifferentFiguresComb (fourFigures: List[List[(String, Int, Int)]]): List[List[(String, Int, Int)]] = {
+
+    val bishopsComb = bishops.combinations(2).map(fig => fig.dropWhile(f => twoFiguresFilter(f, fig))).toList.filterNot(x => x.isEmpty)
+    val threeFiguresList = fourFigures ::: bishopsComb
+    val threeFiguresComb = threeFiguresList.combinations(2).map(fig => fig.dropWhile(f => filterFiguresList(f, fig.tail.head))).filterNot(x => x.isEmpty).toList
+    threeFiguresComb map (x => x.flatten)
+  }
+
+
+  def filterFiguresList (firstList: List[(String, Int, Int)], secondList: List[(String, Int, Int)]): Boolean = {
+    firstList exists ( fig =>  fig._1.contains(secondList.head._1) || isAttack(fig, secondList) || secondList.exists (x => isAttack(x, firstList)))
+  }
+
+
+  def twoFiguresFilter (figure: (String, Int, Int), positions: List[(String, Int, Int)]): Boolean = {
+    isOccupyPosition(figure, positions) && canTakePlace(figure, positions)// && isProperTimesOnList(figure, positions)
   }
 
 
@@ -90,13 +103,26 @@ def twoSameFiguresComb: List[List[(String, Int, Int)]] =  {
   }
 
 
-  def isAttackted(pos: (String, Int, Int), positions: List[(String, Int, Int)]): Boolean =
+  def isAttack(pos: (String, Int, Int), positions: List[(String, Int, Int)]): Boolean =
     pos._1 match {
-      case "Queen" => positions forall (p => Figure.isQueenAttack((p._2, p._3), (pos._2, pos._3)))
-      case "King" => positions forall (p => Figure.isKingAttack((p._2, p._3), (pos._2, pos._3)))
-      case "Bishop" => positions forall  (p => Figure.isBishopAttack((p._2, p._3), (pos._2, pos._3)))
-      case "Knight" => positions forall  (p => Figure.isKnightAttack((p._2, p._3), (pos._2, pos._3)))
+      case "Queen" => positions exists (p => Figure.isQueenAttack((p._2, p._3), (pos._2, pos._3)))
+      case "King" => positions exists (p => Figure.isKingAttack((p._2, p._3), (pos._2, pos._3)))
+      case "Bishop" => positions exists (p => Figure.isBishopAttack((p._2, p._3), (pos._2, pos._3)))
+      case "Knight" => positions exists (p => Figure.isKnightAttack((p._2, p._3), (pos._2, pos._3)))
       case _ => print("Bad figure name")
         true
     }
+
+
+
+def canTakePlace(pos: (String, Int, Int), positions: List[(String, Int, Int)]): Boolean =
+pos._1 match {
+case "Queen" => positions forall (p => Figure.isQueenAttack((p._2, p._3), (pos._2, pos._3)))
+case "King" => positions forall (p => Figure.isKingAttack((p._2, p._3), (pos._2, pos._3)))
+case "Bishop" => positions forall (p => Figure.isBishopAttack((p._2, p._3), (pos._2, pos._3)))
+case _ => print("Bad figure name")
+true
+}
+
+
 }

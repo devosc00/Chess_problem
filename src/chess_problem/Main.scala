@@ -21,11 +21,12 @@ object Main {
 
     val semilist = chess.twoSameFiguresComb
 
-//    val stream = chess.withStream(chess.findSolution(partList, 7))
+    val fourFigComb = chess.threeDifferentFiguresComb(chess.twoDifferentFiguresComb(semilist))
 
-//    val print = for (sem <- semilist) println(sem)
-//    print
-//    println(semilist.size)
+
+    val print = for (sem <- fourFigComb) println(sem)
+    print
+    println(fourFigComb.size)
 
   }
 
